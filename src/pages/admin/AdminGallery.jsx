@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import client from '../../api/client';
 
-const empty = { imageUrl: '', caption: '', album: 'General' };
-
 export default function AdminGallery() {
   const [images, setImages] = useState([]);
-  const [form, setForm] = useState(empty);
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [caption, setCaption] = useState('');
+  const [album, setAlbum] = useState('General');
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -16,18 +18,40 @@ export default function AdminGallery() {
 
   useEffect(load, []);
 
-  const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+  const onFileChange = (e) => {
+    const f = e.target.files[0];
+    setFile(f || null);
+    setPreview(f ? URL.createObjectURL(f) : null);
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (!file) {
+      setStatus({ type: 'error', text: 'Please choose an image file.' });
+      return;
+    }
     setStatus(null);
+    setSubmitting(true);
     try {
-      await client.post('/gallery', form);
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('caption', caption);
+      formData.append('album', album);
+
+      await client.post('/gallery', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
       setStatus({ type: 'success', text: 'Image added.' });
-      setForm(empty);
+      setFile(null);
+      setPreview(null);
+      setCaption('');
+      setAlbum('General');
       load();
     } catch (err) {
       setStatus({ type: 'error', text: err.response?.data?.message || 'Could not add image.' });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -42,7 +66,7 @@ export default function AdminGallery() {
       <form className="card" style={styles.form} onSubmit={onSubmit}>
         <h3 style={{ marginTop: 0 }}>Add Photo</h3>
         <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: -8 }}>
-          Paste an image URL (e.g. from Google Drive, Imgur, or your host). File upload isn't wired up yet.
+          Upload an image file directly from your computer.
         </p>
         {status && (
           <div className={`status-message ${status.type === 'success' ? 'status-success' : 'status-error'}`}>
@@ -50,18 +74,23 @@ export default function AdminGallery() {
           </div>
         )}
         <div className="form-field">
-          <label>Image URL</label>
-          <input name="imageUrl" required value={form.imageUrl} onChange={onChange} placeholder="https://…" />
+          <label>Image File</label>
+          <input type="file" accept="image/*" onChange={onFileChange} required />
         </div>
+        {preview && (
+          <img src={preview} alt="Preview" style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 8, marginBottom: 12 }} />
+        )}
         <div className="form-field">
           <label>Caption (optional)</label>
-          <input name="caption" value={form.caption} onChange={onChange} />
+          <input value={caption} onChange={(e) => setCaption(e.target.value)} />
         </div>
         <div className="form-field">
           <label>Album</label>
-          <input name="album" value={form.album} onChange={onChange} placeholder="e.g. Fiesta 2026" />
+          <input value={album} onChange={(e) => setAlbum(e.target.value)} placeholder="e.g. Fiesta 2026" />
         </div>
-        <button className="btn btn-primary" type="submit">Add to Gallery</button>
+        <button className="btn btn-primary" type="submit" disabled={submitting} style={{ width: '100%' }}>
+          {submitting ? 'Uploading…' : 'Add to Gallery'}
+        </button>
       </form>
 
       <div>

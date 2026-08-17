@@ -8,6 +8,7 @@ import Gallery from './pages/Gallery';
 import Members from './pages/Members';
 import Join from './pages/Join';
 import Contact from './pages/Contact';
+import AdminRegister from './pages/AdminRegister';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/join" element={<Join />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/register" element={<AdminRegister />} />
         <Route
           path="/admin/dashboard"
           element={

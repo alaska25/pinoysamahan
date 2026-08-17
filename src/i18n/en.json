@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "home": "Home",
+    "events": "Events",
+    "news": "News",
+    "gallery": "Gallery",
+    "members": "Members",
+    "join": "Join",
+    "contact": "Contact"
+  },
+  "adminLogin": {
+    "eyebrow": "Samahan ng Pinoy",
+    "heading": "For those who shape the community.",
+    "subtitle": "Sign in as admin to manage events, news, gallery, and members of Samahan ng Pinoy | Pinoy sa Japan.",
+    "title": "Admin Login",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign In",
+    "signingIn": "Signing in…",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Register here"
+  },
+  "adminRegister": {
+    "eyebrow": "Samahan ng Pinoy",
+    "heading": "Join those who lead.",
+    "subtitle": "Create an admin account to help manage events, news, gallery, and members of Samahan ng Pinoy | Pinoy sa Japan.",
+    "title": "Admin Registration",
+    "fullName": "Full Name",
+    "email": "Email",
+    "password": "Password",
+    "register": "Register",
+    "creating": "Creating account…",
+    "haveAccount": "Already have an account?",
+    "signInHere": "Sign in here"
+  },
+  "home": {
+    "badgeHero": "Pinoy in Japan — Live Network",
+    "heroTitleLine1": "Wherever you are in Japan,",
+    "heroTitleLine2": "a home is waiting for you.",
+    "heroSub": "A vibrant community of Filipinos in Japan — where kababayan gather for festivals, support each other in times of need, and take pride in our Filipino culture together.",
+    "ctaJoin": "Join the Samahan",
+    "ctaEvents": "View Events",
+    "statLabels": ["Prefectures represented", "Kababayan sa network", "Events per year", "Years of the samahan"],
+    "badgeUpcoming": "Upcoming",
+    "eventsHeading": "Upcoming Events",
+    "viewAll": "View all →",
+    "noEvents": "No upcoming events right now.",
+    "badgeNews": "News",
+    "newsHeading": "Latest from the Samahan",
+    "noNews": "No news yet.",
+    "ctaHeading": "Ready to join?",
+    "ctaSub": "Joining is free. We just need a little info so we can reach you for upcoming events and news.",
+    "ctaJoinNow": "Join Now"
+  }
+}

@@ -22,6 +22,13 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, []);
 
+  const register = async (name, email, password) => {
+    const res = await client.post('/auth/register', { name, email, password });
+    localStorage.setItem('snp_token', res.data.token);
+    setAdmin(res.data.admin);
+    return res.data.admin;
+  };
+
   const login = async (email, password) => {
     const res = await client.post('/auth/login', { email, password });
     localStorage.setItem('snp_token', res.data.token);
@@ -35,7 +42,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ admin, loading, login, logout }}>
+    <AuthContext.Provider value={{ admin, loading, register, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

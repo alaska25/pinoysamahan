@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-
-const links = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/events', label: 'Events' },
-  { to: '/news', label: 'News' },
-  { to: '/gallery', label: 'Gallery' },
-  { to: '/members', label: 'Members' },
-  { to: '/join', label: 'Join' },
-  { to: '/contact', label: 'Contact' }
-];
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
+
+  const links = [
+    { to: '/', label: t('nav.home'), end: true },
+    { to: '/events', label: t('nav.events') },
+    { to: '/news', label: t('nav.news') },
+    { to: '/gallery', label: t('nav.gallery') },
+    { to: '/members', label: t('nav.members') },
+    { to: '/join', label: t('nav.join') },
+    { to: '/contact', label: t('nav.contact') }
+  ];
 
   return (
     <header style={styles.header}>
@@ -42,15 +45,18 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <button
-          className="menu-toggle-btn"
-          style={styles.menuBtn}
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
-          aria-expanded={open}
-        >
-          {open ? '✕' : '☰'}
-        </button>
+        <div style={styles.rightGroup}>
+          <LanguageSwitcher />
+          <button
+            className="menu-toggle-btn"
+            style={styles.menuBtn}
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Toggle menu"
+            aria-expanded={open}
+          >
+            {open ? '✕' : '☰'}
+          </button>
+        </div>
       </div>
     </header>
   );
@@ -113,6 +119,11 @@ const styles = {
     color: 'var(--color-ink)',
     borderBottomColor: 'var(--color-sun)'
   },
+  rightGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 16
+  },
   menuBtn: {
     display: 'none',
     background: 'none',
@@ -122,4 +133,3 @@ const styles = {
     color: 'var(--color-ink)'
   }
 };
-

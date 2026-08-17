@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import client from '../api/client';
 import Sunburst from '../components/Sunburst';
 import EventCard from '../components/EventCard';
 import NewsCard from '../components/NewsCard';
 
-// Static, so define once outside the component instead of recreating it every render.
-// NOTE: still using the same placeholder image for all three slots — swap these in once
-// you have distinct hero images.
 const HERO_IMAGES = [
   '/img/25970.jpg',
   '/img/25963.jpg',
@@ -19,48 +17,6 @@ const HERO_IMAGES = [
   '/img/25969.jpg'
 ];
 
-// Copy in both languages. Add a key here + reference it via t.key below to extend.
-const COPY = {
-  en: {
-    badgeHero: 'Pinoy in Japan — Live Network',
-    heroTitle: <>Wherever you are in Japan,<br />a home is waiting for you.</>,
-    heroSub: 'A vibrant community of Filipinos in Japan — where kababayan gather for festivals, support each other in times of need, and take pride in our Filipino culture together.',
-    ctaJoin: 'Join the Samahan',
-    ctaEvents: 'View Events',
-    statLabels: ['Prefectures represented', 'Kababayan sa network', 'Events per year', 'Years of the samahan'],
-    badgeUpcoming: 'Upcoming',
-    eventsHeading: 'Upcoming Events',
-    viewAll: 'View all →',
-    noEvents: 'No upcoming events right now.',
-    badgeNews: 'News',
-    newsHeading: 'Latest from the Samahan',
-    noNews: 'No news yet.',
-    ctaHeading: 'Ready to join?',
-    ctaSub: 'Joining is free. We just need a little info so we can reach you for upcoming events and news.',
-    ctaJoinNow: 'Join Now',
-  },
-  tl: {
-    badgeHero: 'Pinoy sa Japan — Live Network',
-    heroTitle: <>Kahit saan ka man sa Japan,<br />may tahanang naghihintay sa iyo.</>,
-    heroSub: 'Isang masiglang komunidad ng mga Pilipino sa Japan—dito nagtatagpo ang mga kababayan para sa mga pistahan, damayan sa oras ng pangangailangan, at sama-samang pagmamalaki sa ating kulturang Pinoy.',
-    ctaJoin: 'Sumali sa Samahan',
-    ctaEvents: 'Tingnan ang Events',
-    statLabels: ['Prefectures represented', 'Kababayan sa network', 'Events kada taon', 'Taon ng samahan'],
-    badgeUpcoming: 'Paparating',
-    eventsHeading: 'Mga Susunod na Event',
-    viewAll: 'Tingnan lahat →',
-    noEvents: 'Walang paparating na event sa ngayon.',
-    badgeNews: 'Balita',
-    newsHeading: 'Latest sa Samahan',
-    noNews: 'Wala pang balita.',
-    ctaHeading: 'Handa ka na bang sumali?',
-    ctaSub: 'Libre ang pagsali. Kailangan lang namin ng konting impormasyon para madali kang ma-reach para sa mga susunod na event at balita.',
-    ctaJoinNow: 'Sumali Ngayon',
-  },
-};
-
-// Theme tokens. Accent hues (gold/cyan/violet) stay constant across themes for brand
-// consistency — only the neutrals (background, glass, ink, dot grid) invert.
 const THEMES = {
   dark: {
     '--w3-void': '#05060c',
@@ -119,11 +75,23 @@ export default function Home() {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [activeEventIndex, setActiveEventIndex] = useState(0);
 
-  const [lang, setLang] = usePersistedState('samahan-lang', 'tl');
   const [theme, setTheme] = usePersistedState('samahan-theme', 'dark');
-  const t = COPY[lang];
 
-  // Swipe logic references for touch/mouse devices
+  // Language now comes from the shared i18next instance (same source the
+  // Navbar's EN/TL switcher controls), instead of a page-local copy.
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
+  const setLang = (lng) => {
+    i18n.changeLanguage(lng);
+    try {
+      localStorage.setItem('snp_lang', lng);
+    } catch {
+      /* ignore storage errors (e.g. private mode) */
+    }
+  };
+
+  const statLabels = t('home.statLabels', { returnObjects: true });
+
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const isDragging = useRef(false);
@@ -137,7 +105,6 @@ export default function Home() {
       .catch((err) => console.error('Failed to load news:', err));
   }, []);
 
-  // 5-second automatic progression for the main hero view
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentHeroIndex((prev) => (prev + 1) % HERO_IMAGES.length);
@@ -145,7 +112,6 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // Unified Swipe Handlers for Swiping Mobile/Desktop Interactions
   const handlePointerDown = (e) => {
     isDragging.current = true;
     const x = e.clientX ?? e.touches?.[0]?.clientX;
@@ -162,13 +128,13 @@ export default function Home() {
     if (!isDragging.current) return;
     isDragging.current = false;
 
-    const threshold = 50; // Required swipe distance in pixels
+    const threshold = 50;
     const distance = touchStartX.current - touchEndX.current;
 
     if (distance > threshold && activeEventIndex < events.length - 1) {
-      setActiveEventIndex((prev) => prev + 1); // Swiped Left -> Next Slide
+      setActiveEventIndex((prev) => prev + 1);
     } else if (distance < -threshold && activeEventIndex > 0) {
-      setActiveEventIndex((prev) => prev - 1); // Swiped Right -> Previous Slide
+      setActiveEventIndex((prev) => prev - 1);
     }
   };
 
@@ -179,10 +145,8 @@ export default function Home() {
 
   return (
     <div style={rootStyle}>
-      {/* Scoped fonts, keyframes, and hover/focus states that can't be expressed as inline styles */}
       <style>{globalCss}</style>
 
-      {/* CONTROLS — theme + language, fixed so they're reachable from anywhere on the page */}
       <div style={styles.controlsWrap}>
         <div className="w3-toggle" style={styles.toggleGroup} role="group" aria-label="Theme">
           <button
@@ -229,7 +193,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* SECTION 1: HERO */}
       <section style={styles.hero}>
         <div className="w3-dotgrid" style={styles.dotgrid} />
         <div className="w3-orb w3-orb-gold" style={styles.orbGold} />
@@ -249,21 +212,22 @@ export default function Home() {
         <div className="container" style={styles.heroInner}>
           <span className="w3-badge" style={styles.badge}>
             <span className="w3-pulse-dot" style={styles.pulseDot} />
-            {t.badgeHero}
+            {t('home.badgeHero')}
           </span>
 
-          <h1 style={styles.heroTitle}>{t.heroTitle}</h1>
-          <p style={styles.heroSub}>{t.heroSub}</p>
+          <h1 style={styles.heroTitle}>
+            {t('home.heroTitleLine1')}<br />{t('home.heroTitleLine2')}
+          </h1>
+          <p style={styles.heroSub}>{t('home.heroSub')}</p>
           <div style={styles.heroActions}>
             <Link to="/join" className="w3-btn-primary" style={styles.btnPrimary}>
-              {t.ctaJoin}
+              {t('home.ctaJoin')}
             </Link>
             <Link to="/events" className="w3-btn-outline" style={styles.btnOutline}>
-              {t.ctaEvents}
+              {t('home.ctaEvents')}
             </Link>
           </div>
 
-          {/* Hero Indicator — styled as confirmation ticks rather than plain dots */}
           <div style={styles.carouselDots}>
             {HERO_IMAGES.map((_, i) => (
               <button
@@ -281,32 +245,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 2: STATS — presented like on-chain network stats */}
       <section style={styles.statsSection}>
         <div className="container">
           <div style={styles.statsGrid}>
-            <Stat number="47" label={t.statLabels[0]} />
-            <Stat number="1,200+" label={t.statLabels[1]} />
-            <Stat number="60+" label={t.statLabels[2]} />
-            <Stat number="12" label={t.statLabels[3]} />
+            <Stat number="47" label={statLabels[0]} />
+            <Stat number="1,200+" label={statLabels[1]} />
+            <Stat number="60+" label={statLabels[2]} />
+            <Stat number="12" label={statLabels[3]} />
           </div>
         </div>
       </section>
 
-      {/* SECTION 3: EVENTS SLIDER WITH MOBILE SWIPE GESTURES */}
       <section style={styles.eventsSection}>
         <div className="container">
           <div style={styles.sectionHeadRow}>
             <div>
               <span className="w3-badge" style={styles.badgeSmall}>
                 <span className="w3-pulse-dot" style={styles.pulseDotSmall} />
-                {t.badgeUpcoming}
+                {t('home.badgeUpcoming')}
               </span>
-              <h2 style={styles.h2}>{t.eventsHeading}</h2>
+              <h2 style={styles.h2}>{t('home.eventsHeading')}</h2>
             </div>
             <div style={styles.eventControls}>
               <Link to="/events" className="w3-link" style={styles.viewAll}>
-                {t.viewAll}
+                {t('home.viewAll')}
               </Link>
               {events.length > 1 && (
                 <div style={styles.navButtons}>
@@ -333,7 +295,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Swipe Container Window */}
           <div
             style={styles.sliderWindow}
             onTouchStart={handlePointerDown}
@@ -345,7 +306,7 @@ export default function Home() {
             onMouseLeave={handleEventSwipeEnd}
           >
             {events.length === 0 && (
-              <p style={styles.emptyText}>{t.noEvents}</p>
+              <p style={styles.emptyText}>{t('home.noEvents')}</p>
             )}
             <div
               style={{
@@ -365,23 +326,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 4: NEWS */}
       <section style={styles.newsSection}>
         <div className="container">
           <div style={styles.sectionHeadRow}>
             <div>
               <span className="w3-badge" style={styles.badgeSmall}>
                 <span className="w3-pulse-dot" style={styles.pulseDotSmall} />
-                {t.badgeNews}
+                {t('home.badgeNews')}
               </span>
-              <h2 style={styles.h2}>{t.newsHeading}</h2>
+              <h2 style={styles.h2}>{t('home.newsHeading')}</h2>
             </div>
             <Link to="/news" className="w3-link" style={styles.viewAll}>
-              {t.viewAll}
+              {t('home.viewAll')}
             </Link>
           </div>
           <div style={styles.newsGrid}>
-            {news.length === 0 && <p style={styles.emptyText}>{t.noNews}</p>}
+            {news.length === 0 && <p style={styles.emptyText}>{t('home.noNews')}</p>}
             {news.map((n) => (
               <div key={n._id} className="w3-card" style={styles.cardFrame}>
                 <NewsCard article={n} />
@@ -391,17 +351,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 5: CTA */}
       <section style={styles.ctaSection}>
         <div className="w3-dotgrid" style={styles.dotgridCta} />
         <div className="w3-orb w3-orb-violet" style={styles.orbViolet} />
         <div className="container" style={styles.ctaPanel}>
           <div style={styles.ctaText}>
-            <h2 style={styles.h2White}>{t.ctaHeading}</h2>
-            <p style={styles.ctaSub}>{t.ctaSub}</p>
+            <h2 style={styles.h2White}>{t('home.ctaHeading')}</h2>
+            <p style={styles.ctaSub}>{t('home.ctaSub')}</p>
           </div>
           <Link to="/join" className="w3-btn-primary" style={styles.btnPrimary}>
-            {t.ctaJoinNow}
+            {t('home.ctaJoinNow')}
           </Link>
         </div>
       </section>
@@ -436,7 +395,6 @@ function MoonIcon() {
   );
 }
 
-// Tokens that don't change with theme (accents stay constant for brand consistency).
 const rootVars = {
   '--w3-gold': '#F5B301',
   '--w3-gold-2': '#FF8A3D',
@@ -491,13 +449,10 @@ const globalCss = `
 
 const styles = {
   controlsWrap: {
-    // Navbar is `position: sticky` with a fixed 72px height (see Navbar.jsx),
-    // so anchor 14px below it rather than using an arbitrary top offset —
-    // otherwise this floats on top of the nav links instead of under them.
     position: 'fixed',
     top: 'calc(72px + 14px)',
     right: 18,
-    zIndex: 35, // below the navbar (40) since they no longer overlap spatially
+    zIndex: 35,
     display: 'flex',
     gap: 10,
   },

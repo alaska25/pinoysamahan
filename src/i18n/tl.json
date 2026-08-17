@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "home": "Home",
+    "events": "Events",
+    "news": "Balita",
+    "gallery": "Gallery",
+    "members": "Miyembro",
+    "join": "Sumali",
+    "contact": "Contact"
+  },
+  "adminLogin": {
+    "eyebrow": "Samahan ng Pinoy",
+    "heading": "Para sa mga humuhubog ng komunidad.",
+    "subtitle": "Mag-sign in bilang admin para mag-manage ng events, balita, gallery, at miyembro ng Samahan ng Pinoy | Pinoy sa Japan.",
+    "title": "Admin Login",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign In",
+    "signingIn": "Nagsa-sign in…",
+    "noAccount": "Wala pang account?",
+    "registerHere": "Mag-register dito"
+  },
+  "adminRegister": {
+    "eyebrow": "Samahan ng Pinoy",
+    "heading": "Sumali sa mga namumuno.",
+    "subtitle": "Gumawa ng admin account para makatulong mag-manage ng events, balita, gallery, at miyembro ng Samahan ng Pinoy | Pinoy sa Japan.",
+    "title": "Admin Registration",
+    "fullName": "Buong Pangalan",
+    "email": "Email",
+    "password": "Password",
+    "register": "Register",
+    "creating": "Ginagawa ang account…",
+    "haveAccount": "May account na?",
+    "signInHere": "Sign in dito"
+  },
+  "home": {
+    "badgeHero": "Pinoy sa Japan — Live Network",
+    "heroTitleLine1": "Kahit saan ka man sa Japan,",
+    "heroTitleLine2": "may tahanang naghihintay sa iyo.",
+    "heroSub": "Isang masiglang komunidad ng mga Pilipino sa Japan—dito nagtatagpo ang mga kababayan para sa mga pistahan, damayan sa oras ng pangangailangan, at sama-samang pagmamalaki sa ating kulturang Pinoy.",
+    "ctaJoin": "Sumali sa Samahan",
+    "ctaEvents": "Tingnan ang Events",
+    "statLabels": ["Prefectures represented", "Kababayan sa network", "Events kada taon", "Taon ng samahan"],
+    "badgeUpcoming": "Paparating",
+    "eventsHeading": "Mga Susunod na Event",
+    "viewAll": "Tingnan lahat →",
+    "noEvents": "Walang paparating na event sa ngayon.",
+    "badgeNews": "Balita",
+    "newsHeading": "Latest sa Samahan",
+    "noNews": "Wala pang balita.",
+    "ctaHeading": "Handa ka na bang sumali?",
+    "ctaSub": "Libre ang pagsali. Kailangan lang namin ng konting impormasyon para madali kang ma-reach para sa mga susunod na event at balita.",
+    "ctaJoinNow": "Sumali Ngayon"
+  }
+}
